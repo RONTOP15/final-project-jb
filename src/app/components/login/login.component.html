@@ -1,0 +1,43 @@
+<div class="login">
+    <div>
+        <p *ngIf="loginT">Login</p>
+        <p *ngIf="!loginT">Welcome</p>
+
+
+        <div class="example-container" *ngIf="loginT; else logged">
+            <form [formGroup]="loginForm">
+                <mat-form-field appearance="legacy">
+                    <mat-label>Email</mat-label>
+                    <input matInput placeholder="Email..." formControlName="email">
+                    <mat-hint>Email</mat-hint>
+                </mat-form-field>
+                <br>
+                <mat-form-field appearance="legacy">
+                    <mat-label>Password</mat-label>
+                    <input matInput type="password" placeholder="Password..." formControlName="password">
+                    <mat-hint>Password</mat-hint>
+                </mat-form-field>
+                <br>
+                <div class="control">
+                    <button mat-raised-button color="primary" (click)="subUserLogin()">Login</button>
+                    <br>
+                    <p *ngIf="err" style="color: red">***{{err}}</p>
+                    <a [routerLink]="['/register']" routerLinkActive="router-link-active">Register</a>
+                </div>
+            </form>
+        </div>
+
+        <div #logged *ngIf="!loginT">
+            <mat-card class="card">
+                <p>Hello {{firstName}}</p>
+                <p>ID: {{numberId}}</p>
+            </mat-card>
+        </div>
+    </div>
+
+    <div class="start-shop">
+        <button [routerLink]="['/shop']" routerLinkActive="router-link-active" [disabled]="loginT" mat-raised-button
+            color="primary">Start Shopping</button>
+    </div>
+
+</div>

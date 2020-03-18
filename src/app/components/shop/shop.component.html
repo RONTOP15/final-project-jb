@@ -1,0 +1,79 @@
+<mat-drawer-container class="container" autosize>
+    <mat-drawer #drawer class="sidenav" mode="side">
+        <p>Hello {{decoded.firstName}} enjoy from your shopping </p>
+        <mat-card *ngFor="let x of userCartInfo" class="card">
+            <div class="card-head">
+                <p>{{x.prodcut_id.productName}}</p>
+                <img class="image" src="../../../assets/public/img/{{x.prodcut_id.image}}" width="50" alt="" />
+            </div>
+            <mat-card-content>
+                <mat-card-subtitle>Quantity: {{x.quantity}}</mat-card-subtitle>
+                <mat-card-subtitle>Sum: ₪{{x.sum}}</mat-card-subtitle>
+            </mat-card-content>
+            <mat-card-actions>
+                <button [id]="x._id" (click)="deleteProductFromCart($event)" mat-button color="warn">del</button>
+            </mat-card-actions>
+        </mat-card>
+        <div class="order">
+            <p>Total: ₪{{userCartTotal | json}}</p>
+            <button type="button" [routerLink]="['/order']" routerLinkActive="router-link-active"
+                mat-button>ORDER</button>
+        </div>
+    </mat-drawer>
+
+    <!-- MAIN DISPLAY -->
+    <div class="display">
+        <nav class="nav">
+            <button type="button" mat-button (click)="drawer.toggle();subGetCartInfoById()">
+                <svg xmlns="http://www.w3.org/2000/svg" height="24" viewBox="0 0 24 24" width="24">
+                    <path fill="#3F51B5"
+                        d="M7 18c-1.1 0-1.99.9-1.99 2S5.9 22 7 22s2-.9 2-2-.9-2-2-2zM1 2v2h2l3.6 7.59-1.35 2.45c-.16.28-.25.61-.25.96 0 1.1.9 2 2 2h12v-2H7.42c-.14 0-.25-.11-.25-.25l.03-.12.9-1.63h7.45c.75 0 1.41-.41 1.75-1.03l3.58-6.49c.08-.14.12-.31.12-.48 0-.55-.45-1-1-1H5.21l-.94-2H1zm16 16c-1.1 0-1.99.9-1.99 2s.89 2 1.99 2 2-.9 2-2-.9-2-2-2z" />
+                    <path d="M0 0h24v24H0z" fill="none" /></svg>
+            </button>
+            <ul>
+                <li (click)="getAllProducts()">All</li>
+                <li (click)="getByCatagory($event)">Apple</li>
+                <li (click)="getByCatagory($event)">Hp</li>
+                <li (click)="getByCatagory($event)">Asus</li>
+                <li (click)="getByCatagory($event)">Lenovo</li>
+                <li (click)="getByCatagory($event)">Accessories</li>
+            </ul>
+
+            <div class="search">
+                <mat-form-field class="example-form-field">
+                    <mat-label>Search</mat-label>
+                    <input matInput type="text" [(ngModel)]="searchValue">
+                    <button mat-button *ngIf="searchValue" matSuffix mat-icon-button aria-label="Clear"
+                        (click)="searchValue=''">
+                        <mat-icon>close</mat-icon>
+                    </button>
+                </mat-form-field>
+                <button mat-button (click)="getProductsBySearchValue()" color="primary">Search</button>
+            </div>
+        </nav>
+        <div class="products">
+            <mat-card class="example-card" *ngFor="let p of products">
+                <mat-card-header>
+                    <mat-card-title>{{p.productName}}</mat-card-title>
+                </mat-card-header>
+                <img mat-card-image src='../../../assets/public/img/{{p.image}}' alt="">
+                <mat-card-content>
+                    <mat-card-subtitle>Model: {{p.productName}}</mat-card-subtitle>
+                    <mat-card-subtitle>Price:<span style="color: green">
+                            ₪{{p.price}}</span></mat-card-subtitle>
+                </mat-card-content>
+                <mat-card-actions class="actions">
+                    <button mat-button (click)="changeDialog($event)">Add to cart</button>
+                    <div [style.display]="dialog">
+                        <div class="order-box">
+                            <input type="number" value="1" class="quantity" #quantity (click)="inputClick">
+                            <button [attr.data-target]="p.price" [id]="p._id" color="primary"
+                                (click)="addProduct($event, quantity.value, p)" mat-stroked-button>Add</button>
+                        </div>
+                    </div>
+                </mat-card-actions>
+            </mat-card>
+        </div>
+    </div>
+
+</mat-drawer-container>
