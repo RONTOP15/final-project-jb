@@ -1,21 +1,27 @@
-import { Component, OnInit, ViewEncapsulation } from '@angular/core';
+import { Component, OnInit, ViewEncapsulation, ViewChild, ElementRef } from '@angular/core';
 import { ProductsService } from 'src/app/services/products/products.service';
 import { UsersService } from 'src/app/services/users/users.service';
-import { FormBuilder } from '@angular/forms';
+import { FormBuilder, Validators } from '@angular/forms';
 import { EventEmitter } from 'events';
 import { OrdersService } from 'src/app/services/orders/orders.service';
-import { MatCalendarCellCssClasses } from '@angular/material';
+import { HttpClient, HttpHeaders } from '@angular/common/http';
+import { TmplAstRecursiveVisitor } from '@angular/compiler';
 
 @Component({
   selector: 'app-order',
   templateUrl: './order.component.html',
   styleUrls: ['./order.component.scss'],
-  encapsulation: ViewEncapsulation.None
 })
 
 
 export class OrderComponent implements OnInit {
 
+
+
+  @ViewChild('pdfTable', { static: false }) pdfTable: ElementRef;
+
+
+  public userid: String
   public firstName: String
   public cartId: any
   public bfOrder: any
@@ -32,38 +38,52 @@ export class OrderComponent implements OnInit {
   public orders
   public picker
 
-  constructor(public _ps: ProductsService, public _us: UsersService, public _fb: FormBuilder, public _os: OrdersService) { }
+  public dateErr
+
+  public thank: boolean
+
+  public isuser = false
+  public isadmin
+
+  constructor(public _ps: ProductsService, public _us: UsersService, public _fb: FormBuilder, public _os: OrdersService, public http: HttpClient) { }
 
   ngOnInit() {
+    this.thankYou(false)
     this.userDetails()
 
     this.formG = this._fb.group({
       city: [''],
       street: [''],
-      toDate: [''],
-      creditCard: ['']
+      toDate: ['', Validators.required],
+      creditCard: ['', Validators.required]
     })
+    this.subGetOrders()
 
+  }
+
+  subGetOrders() {
     this._os.getOrders().subscribe(
       res => {
         this.orders = res
-        console.log(res)
       },
       err => {
         console.log(err)
       }
     )
-
   }
 
   userDetails() {
-    const token = localStorage.getItem('token')
+    const token = sessionStorage.getItem('token')
+
     this._us.checkToken(token).subscribe(
       res => {
         this.firstName = res['firstName']
         this.cartId = res['cart_id']
         this.city = res['city']
         this.street = res['street']
+        this.userid = res['_id']
+        this.isuser = true
+        this.isadmin = res['isAdmin']
         this.start()
       },
       err => {
@@ -87,24 +107,67 @@ export class OrderComponent implements OnInit {
 
   searchAndMarkIt(search) {
     this.searchTerm = search
-    console.log(this.searchTerm)
   }
 
 
+  // Why the input is not updated after change the 
   dblClickCity(e) {
     e.srcElement.value = this.city
+    this.formG.controls.city.value = this.city
+
   }
 
   dblClickStreet(e) {
     e.srcElement.value = this.street
+    this.formG.controls.street.value = this.street
   }
 
-  // dateClass = (d: Date): MatCalendarCellCssClasses => {
-  //   const date = d.getDate()
-  //   // let som = this.orders.map(d => d.toDate.split("T")[0])
-  //   // console.log('sommee')
-  //   return (date < 1 || date === 20) ? 'example-custom-date-class' : ''
-  // }
+
+  checkLessThenThreeOrdersPerThisDay(e) {
+    this.subGetOrders()
+    // console.log(e.value.getTime())
+    // console.log(new Date(this.orders[7].toDate).getTime())
+    let newArr = this.orders.filter(f => new Date(f.toDate).getTime() == e.value.getTime())
+
+    if (newArr.length >= 3) {
+      this.dateErr = 'Please pick another date..'
+    } else {
+      this.dateErr = ''
+    }
+  }
+
+  sendOrder() {
+    this._os.newOrder(this.formG.value, this.total, this.cartId, this.userid).subscribe(
+      res => {
+        console.log('Done Thank you!')
+        this.thankYou(true)
+        this.userCompleteGoResetCart()
+        // STATUS
+        localStorage.setItem("status", `completed ${JSON.stringify(new Date())}`)
+      },
+      err => {
+        console.log(err)
+      }
+    )
+
+
+  }
+
+  thankYou(ta) {
+    this.thank = ta
+  }
+
+  userCompleteGoResetCart() {
+    this._os.resetCartAndInfoAndCreateNewCartToThisUser(this.userid, this.cartId).subscribe(
+      res => {
+        console.log(res)
+      },
+      err => {
+        console.log(err)
+      }
+    )
+  }
+
 
 
 

@@ -1,4 +1,4 @@
-<div class="warrper">
+<div *ngIf="isuser" class="warrper">
     <div class="panel">
         <div class="head">
             <p class="h1">My Cart</p>
@@ -13,7 +13,7 @@
                     <span>Price: ₪{{p.price}}</span>
                     <span>Quantity: {{p.quantity}}</span>
                     <span>Sum : {{p.sum}}</span>
-                    <img src="../../../assets/public/img/{{p.prodcut_id.image}}" width="50" alt="">
+                    <img src="http://localhost:3001/img/{{p.prodcut_id.image}}" width="50" alt="">
                 </mat-card>
             </div>
         </div>
@@ -27,31 +27,78 @@
         <form [formGroup]="formG">
             <mat-form-field>
                 <mat-label>City</mat-label>
-                <input (dblclick)="dblClickCity($event)" matInput type="text" formControlName="city"
-                    placeholder="City...." required>
+                <input (mousedown)="dblClickCity($event)" matInput type="text" formControlName="city"
+                    [readonly]="isReadonly" placeholder="City....">
             </mat-form-field>
             <br>
             <mat-form-field>
                 <mat-label>Street</mat-label>
-                <input matInput type="text" (dblclick)="dblClickStreet($event)" formControlName="street"
-                    placeholder="Street...." required>
+                <input matInput type="text" (mousedown)="dblClickStreet($event)" [readonly]="isReadonly"
+                    formControlName="street" placeholder="Street....">
             </mat-form-field>
             <br>
             <mat-form-field class="example-full-width">
                 <mat-label>Choose a date</mat-label>
-                <input matInput [matDatepicker]="picker">
-                <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
-                <mat-datepicker [dateClass]="dateClass" #picker></mat-datepicker>
+                <input matInput [matDatepicker]="picker" formControlName="toDate"
+                    (dateChange)="checkLessThenThreeOrdersPerThisDay($event)">
+                <mat-datepicker-toggle matSuffix [for]="picker">
+                </mat-datepicker-toggle>
+                <mat-datepicker touchUi #picker></mat-datepicker>
             </mat-form-field>
             <br>
-
             <mat-form-field>
                 <mat-label>Payment</mat-label>
-                <input matInput type="text" formControlName="creditCard" placeholder="Credit Card...." required>
+                <input matInput type="text" formControlName="creditCard" placeholder="4580-3001-1234-5678" required>
             </mat-form-field>
-            <br>
 
-            <button type="button" mat-button>Pay</button>
+            <br>
+            <button type="button" (click)="sendOrder()" [disabled]="dateErr || formG.invalid" mat-button>Pay</button>
         </form>
+        <p style="color: red">
+            {{dateErr}}
+        </p>
     </div>
+</div>
+
+
+<div *ngIf="isuser">
+    <!-- thank => var of true/false when user click -->
+    <mat-card class="thank-you" *ngIf="thank">
+        <span class="exit" (click)="thankYou(false)">
+            <svg fill="none" height="24" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"
+                stroke-width="2" viewBox="0 0 24 24" width="24" xmlns="http://www.w3.org/2000/svg">
+                <circle cx="12" cy="12" r="10" />
+                <line x1="15" x2="9" y1="9" y2="15" />
+                <line x1="9" x2="15" y1="9" y2="15" /></svg>
+        </span>
+        <mat-card-header>
+            <mat-card-title>
+                Tax Invoice / Receipt 855664
+            </mat-card-title>
+            <mat-card-subtitle>
+                Thank you for your final payment on your appliance account.<br>
+                We appreciate the prompt manner in which you have made these payments.
+            </mat-card-subtitle>
+        </mat-card-header>
+        <mat-card-content>
+            To: {{firstName}} <br>
+            To Date: {{ +formG.controls.toDate.value  | date }}
+        </mat-card-content>
+        <mat-card-actions>
+            <!-- <button (click)="thankYou(false)" mat-raised-button color="primary">
+                Download Invoice
+            </button>> -->
+            <button (click)="thankYou(false)" [routerLink]="['/']" routerLinkActive="router-link-active"
+                mat-raised-button color="primary">
+                <a href=" http://localhost:3001/api/v1/orders/invoice" download>Download</a>
+            </button>
+
+        </mat-card-actions>
+
+    </mat-card>
+
+</div>
+
+<div *ngIf="!isuser">
+    You have to sgin in/up
 </div>

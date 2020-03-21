@@ -47,7 +47,9 @@ export class RegisterComponent implements OnInit {
         rrr => {
           console.log(rrr)
           this.emailExistError = 'The registration was successful'
-
+          // STATUS
+          localStorage.setItem("status", `welcome ${JSON.stringify(new Date())}`)
+          sessionStorage.setItem("token", rrr['token'])
           this.router.navigate([''])
         }, eee => {
           console.log(eee)
@@ -57,8 +59,10 @@ export class RegisterComponent implements OnInit {
 
   checkPasswords() {
     if (this.firstFormGroup.controls.password.value !== this.firstFormGroup.controls.confirm.value) {
-      this.matchPassword = '*The passwords do not match'
+      this.matchPassword = '* The passwords do not match'
     }
   }
+
+
 }
 

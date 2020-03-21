@@ -19,6 +19,8 @@ export class LoginComponent implements OnInit {
   // Logged
   public firstName
   public numberId
+  public status
+  public imagine
 
   constructor(public _fb: FormBuilder, public _us: UsersService) { }
 
@@ -29,10 +31,23 @@ export class LoginComponent implements OnInit {
       email: [''],
       password: ['']
     })
+
+
+    this.status = localStorage.getItem('status').split(" ")
+
+    if (this.status[0] === 'welcome') {
+      this.imagine = 'welcome'
+    } else if (this.status[0] === 'proccess') {
+      this.imagine = 'proccess'
+    } else if (this.status[0] === 'completed') {
+      this.imagine = 'completed'
+    } else {
+      this.imagine = undefined
+    }
   }
 
   checkIfUserLoggedIn(): void {
-    const token = localStorage.getItem('token');
+    const token = sessionStorage.getItem('token');
     if (token === null) {
       console.log('token is null')
     } else {
@@ -55,7 +70,7 @@ export class LoginComponent implements OnInit {
       res => {
         if (res['success']) {
           this.token = res['token']
-          localStorage.setItem('token', this.token)
+          sessionStorage.setItem('token', this.token)
           this.loginT = false
           this.checkIfUserLoggedIn()
         } else {

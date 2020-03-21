@@ -1,7 +1,7 @@
 .warrper {
   display: flex;
   justify-content: space-around;
-  width: 100vw;
+  width: 100%;
   height: 100vh;
   padding: 25px;
 }
@@ -35,6 +35,7 @@
 
 .product-warrper {
   border: 1px solid #ececec;
+
   margin: 10px;
 }
 
@@ -70,4 +71,40 @@
 .example-custom-date-class {
   background: #ed303c;
   border-radius: 100%;
+}
+
+.thank-you {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  transition: ease-in 0.25;
+  width: 300px;
+  height: 300px;
+}
+
+.exit {
+  position: absolute;
+  left: 95%;
+  top: 5%;
+  padding: 5px;
+  transform: translateX(-50%) translateY(-50%);
+  cursor: pointer;
+  transition: ease-in 0.27;
+  &:hover {
+    color: #a7aeda;
+  }
+}
+
+.exit:active {
+  color: #3f51b5;
+}
+
+a {
+  color: white;
+  text-decoration: none;
 }

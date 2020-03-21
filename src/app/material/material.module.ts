@@ -13,8 +13,7 @@ import {
   MatSidenavModule,
   MatMenuModule,
   MatDatepickerModule,
-  MatNativeDateModule
-
+  MatNativeDateModule,
 } from '@angular/material/';
 
 
@@ -38,7 +37,7 @@ import {
     MatSidenavModule,
     MatMenuModule,
     MatDatepickerModule,
-    MatNativeDateModule
+    MatNativeDateModule,
 
   ],
   exports: [
@@ -54,7 +53,7 @@ import {
     MatSidenavModule,
     MatMenuModule,
     MatDatepickerModule,
-    MatNativeDateModule
+    MatNativeDateModule,
   ]
 })
 export class MaterialModule { }

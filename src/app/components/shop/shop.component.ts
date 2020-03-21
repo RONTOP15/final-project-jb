@@ -1,6 +1,7 @@
 import { Component, OnInit, ViewChild } from '@angular/core';
 import { ProductsService } from 'src/app/services/products/products.service';
 import { UsersService } from 'src/app/services/users/users.service';
+import { FormBuilder } from '@angular/forms';
 
 
 
@@ -24,26 +25,38 @@ export class ShopComponent implements OnInit {
 
   public dialog = 'none'
   public openDialog = 'block'
+  public isuser = false
+  public isadmin
 
+  public catagory
+  public modaladmin = false
+  public adminForm
 
-  constructor(public _ps: ProductsService, public _us: UsersService) { }
+  constructor(public _ps: ProductsService, public _us: UsersService, public _fb: FormBuilder) { }
 
   ngOnInit() {
     this.getUser()
     this.getAllProducts()
+    // STATUS
+    localStorage.setItem("status", `proccess ${JSON.stringify(new Date())}`)
   }
 
 
   // GET USER
   getUser() {
-    const token = localStorage.getItem('token');
-    if (token === null) {
+    const token = sessionStorage.getItem('token');
+    if (token === null || !token) {
       console.log('token is null')
+      this.isuser = false
     } else {
+      console.log(token)
       this._us.checkToken(token).subscribe(
         res => {
+          this.isuser = true
           this.userid = res['_id']
           this.decoded = res
+          this.isadmin = res['isAdmin']
+          console.log(this.isadmin)
         },
         err => {
           console.log(err)
@@ -69,6 +82,7 @@ export class ShopComponent implements OnInit {
     this._ps.getProductsByCatagory(event.target.innerText).subscribe(
       res => {
         this.products = res[0].products
+        console.log(res)
       },
       err => {
         console.log(err)
@@ -101,6 +115,8 @@ export class ShopComponent implements OnInit {
 
   // GET USER CARTINFO BY USER ID  (products list of user)
   subGetCartInfoById() {
+    console.log(this.decoded);
+
     this._ps.getCartInfoByCartId(this.decoded['cart_id']).subscribe(
       res => {
         this.userCartInfo = res
@@ -146,4 +162,35 @@ export class ShopComponent implements OnInit {
       event.currentTarget.nextElementSibling.style.display = this.dialog
     }
   }
+
+  getCatagories() {
+    this._ps.getCatagory().subscribe(
+      res => {
+        console.log(res);
+        this.catagory = res
+      },
+      err => {
+        console.log(err);
+      }
+    )
+
+    this.adminForm = this._fb.group({
+      productName: [''],
+      price: [''],
+      catagory_id: [''],
+      image: [''],
+    })
+
+
+
+    this.modaladmin = !this.modaladmin
+  }
+
+
+
 }
+
+// productName
+// price
+// catagory_id
+// catagory_name

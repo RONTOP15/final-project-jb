@@ -9,4 +9,17 @@
     <br><br><br><br><br><br><br>
 
     <h6>*** CART STATUS ***</h6>
+
+
+    <div class="user-status">
+        <p *ngIf="imagine === 'welcome'">Welcome, Thanks for registering to our site.</p>
+        <p *ngIf="imagine === 'proccess'">Hello, We see that you have products in the cart from your last visit on <br>
+            {{datestatus | date}}
+        </p>
+        <p *ngIf="imagine === 'completed'">
+            Your last order was on
+            {{datestatus | date}}
+        </p>
+    </div>
+
 </div>

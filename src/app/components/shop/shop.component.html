@@ -1,10 +1,10 @@
-<mat-drawer-container class="container" autosize>
+<mat-drawer-container *ngIf="isuser" class="container" autosize>
     <mat-drawer #drawer class="sidenav" mode="side">
         <p>Hello {{decoded.firstName}} enjoy from your shopping </p>
         <mat-card *ngFor="let x of userCartInfo" class="card">
             <div class="card-head">
                 <p>{{x.prodcut_id.productName}}</p>
-                <img class="image" src="../../../assets/public/img/{{x.prodcut_id.image}}" width="50" alt="" />
+                <img class="image" src="http://localhost:3001/img/{{x.prodcut_id.image}}" width="50" alt="" />
             </div>
             <mat-card-content>
                 <mat-card-subtitle>Quantity: {{x.quantity}}</mat-card-subtitle>
@@ -17,14 +17,15 @@
         <div class="order">
             <p>Total: ₪{{userCartTotal | json}}</p>
             <button type="button" [routerLink]="['/order']" routerLinkActive="router-link-active"
-                mat-button>ORDER</button>
+                mat-button>Order</button>
         </div>
     </mat-drawer>
 
     <!-- MAIN DISPLAY -->
     <div class="display">
         <nav class="nav">
-            <button type="button" mat-button (click)="drawer.toggle();subGetCartInfoById()">
+            <button mat-button (click)="getCatagories()" *ngIf="isadmin">Add Product</button>
+            <button type="button" mat-button *ngIf="isadmin === false" (click)="drawer.toggle();subGetCartInfoById()">
                 <svg xmlns="http://www.w3.org/2000/svg" height="24" viewBox="0 0 24 24" width="24">
                     <path fill="#3F51B5"
                         d="M7 18c-1.1 0-1.99.9-1.99 2S5.9 22 7 22s2-.9 2-2-.9-2-2-2zM1 2v2h2l3.6 7.59-1.35 2.45c-.16.28-.25.61-.25.96 0 1.1.9 2 2 2h12v-2H7.42c-.14 0-.25-.11-.25-.25l.03-.12.9-1.63h7.45c.75 0 1.41-.41 1.75-1.03l3.58-6.49c.08-.14.12-.31.12-.48 0-.55-.45-1-1-1H5.21l-.94-2H1zm16 16c-1.1 0-1.99.9-1.99 2s.89 2 1.99 2 2-.9 2-2-.9-2-2-2z" />
@@ -56,14 +57,15 @@
                 <mat-card-header>
                     <mat-card-title>{{p.productName}}</mat-card-title>
                 </mat-card-header>
-                <img mat-card-image src='../../../assets/public/img/{{p.image}}' alt="">
+                <img mat-card-image src='http://localhost:3001/img/{{p.image}}' alt="">
                 <mat-card-content>
                     <mat-card-subtitle>Model: {{p.productName}}</mat-card-subtitle>
                     <mat-card-subtitle>Price:<span style="color: green">
                             ₪{{p.price}}</span></mat-card-subtitle>
                 </mat-card-content>
                 <mat-card-actions class="actions">
-                    <button mat-button (click)="changeDialog($event)">Add to cart</button>
+                    <button mat-button>Edit</button>
+                    <button mat-button *ngIf="!isadmin" (click)="changeDialog($event)">Add to cart</button>
                     <div [style.display]="dialog">
                         <div class="order-box">
                             <input type="number" value="1" class="quantity" #quantity (click)="inputClick">
@@ -73,7 +75,53 @@
                     </div>
                 </mat-card-actions>
             </mat-card>
+            <div *ngIf="isadmin && modaladmin" class="add-product">
+                <p>
+                    Add product to store
+                </p>
+                <div class="example-container">
+                    <form action=""></form>
+                    <mat-form-field appearance="standart">
+                        <mat-label>Product Name</mat-label>
+                        <input matInput>
+                    </mat-form-field>
+                    <br>
+                    <mat-form-field appearance="standart">
+                        <mat-label>Catagory</mat-label>
+                        <mat-select>
+                            <mat-option *ngFor="let c of catagory" value="c._id">{{c.catagory}}</mat-option>
+                        </mat-select>
+                    </mat-form-field>
+                    <br>
+                    <form action="http://localhost:4002/src/assets/public/img" enctype="multipart/form-data"
+                        method="POST">
+                        <input type="file" name="productFile" multiple="multiple">
+                        <input type="submit" value="Upload">
+                    </form>
+                    <br>
+                    <mat-form-field appearance="standart">
+                        <mat-label>Price</mat-label>
+                        <input matInput>
+                    </mat-form-field>
+                    <br>
+                    <button mat-button>Add Product</button>
+                    <br>
+                </div>
+            </div>
         </div>
     </div>
 
+    <!-- <h2>With <code>"express"</code> npm package</h2>
+    <form action="/api/upload" enctype="multipart/form-data" method="post">
+      <div>Text field title: <input type="text" name="title" /></div>
+      <div>File: <input type="file" name="someExpressFiles" multiple="multiple" /></div>
+      <input type="submit" value="Upload" />
+    </form> -->
+
+
+
 </mat-drawer-container>
+
+<div *ngIf="!isuser">
+    You have to sgin in/up
+</div>

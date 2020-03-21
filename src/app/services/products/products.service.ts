@@ -48,6 +48,11 @@ export class ProductsService {
   }
 
   searchProducts(value): Observable<any> {
+    4
     return this.http.get('http://localhost:3001/api/v1/products/search/' + value)
+  }
+
+  getCatagory(): Observable<any> {
+    return this.http.get('http://localhost:3001/api/v1/catagory')
   }
 }

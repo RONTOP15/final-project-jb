@@ -36,8 +36,14 @@
     </div>
 
     <div class="start-shop">
-        <button [routerLink]="['/shop']" routerLinkActive="router-link-active" [disabled]="loginT" mat-raised-button
-            color="primary">Start Shopping</button>
+        <button *ngIf="imagine === 'welcome' || imagine === 'completed' " [routerLink]="['/shop']"
+            routerLinkActive="router-link-active" [disabled]="loginT" mat-raised-button color="primary">
+            Start Shopping
+        </button>
+        <button *ngIf="imagine === 'proccess'" [routerLink]="['/shop']" routerLinkActive="router-link-active"
+            [disabled]="loginT" mat-raised-button color="primary">
+            Continue Shopping
+        </button>
     </div>
 
 </div>

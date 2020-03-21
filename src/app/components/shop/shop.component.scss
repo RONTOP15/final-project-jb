@@ -124,3 +124,18 @@ li {
 .dialog-off {
   display: none;
 }
+
+.add-product {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  border: 1px solid #3f51b5;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;
+  width: 45%;
+  height: 80%;
+  background: #f4f4f4;
+}
