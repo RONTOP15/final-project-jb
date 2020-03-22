@@ -60,11 +60,15 @@
                 <img mat-card-image src='http://localhost:3001/img/{{p.image}}' alt="">
                 <mat-card-content>
                     <mat-card-subtitle>Model: {{p.productName}}</mat-card-subtitle>
-                    <mat-card-subtitle>Price:<span style="color: green">
-                            ₪{{p.price}}</span></mat-card-subtitle>
+                    <mat-card-subtitle>
+                        Price:
+                        <span style="color: green">
+                            ₪{{p.price}}
+                        </span>
+                    </mat-card-subtitle>
                 </mat-card-content>
                 <mat-card-actions class="actions">
-                    <button mat-button>Edit</button>
+                    <button mat-button *ngIf="isadmin" (click)="openEditModal($event, p._id)">Edit</button>
                     <button mat-button *ngIf="!isadmin" (click)="changeDialog($event)">Add to cart</button>
                     <div [style.display]="dialog">
                         <div class="order-box">
@@ -74,53 +78,77 @@
                         </div>
                     </div>
                 </mat-card-actions>
+
             </mat-card>
             <div *ngIf="isadmin && modaladmin" class="add-product">
                 <p>
                     Add product to store
                 </p>
                 <div class="example-container">
-                    <form action=""></form>
-                    <mat-form-field appearance="standart">
-                        <mat-label>Product Name</mat-label>
-                        <input matInput>
-                    </mat-form-field>
-                    <br>
-                    <mat-form-field appearance="standart">
-                        <mat-label>Catagory</mat-label>
-                        <mat-select>
-                            <mat-option *ngFor="let c of catagory" value="c._id">{{c.catagory}}</mat-option>
-                        </mat-select>
-                    </mat-form-field>
-                    <br>
-                    <form action="http://localhost:4002/src/assets/public/img" enctype="multipart/form-data"
-                        method="POST">
-                        <input type="file" name="productFile" multiple="multiple">
-                        <input type="submit" value="Upload">
+
+                    <!-- SEND NEW PRODUCT ADMIN -->
+                    <form [formGroup]="adminForm"
+                        (ngSubmit)="sendNewProductToStoreAndSaveFileInServerStatic(adminForm.value)">
+                        <mat-form-field appearance="standart">
+                            <mat-label>Product Name</mat-label>
+                            <input matInput name="admin_productName" formControlName="p_name">
+                        </mat-form-field>
+                        <br>
+                        <mat-form-field appearance="standart">
+                            <mat-label>Catagory</mat-label>
+                            <mat-select formControlName="c_id">
+                                <mat-option *ngFor="let c of catagory" [value]="c._id">
+                                    {{c.catagory}}
+                                </mat-option>
+                            </mat-select>
+                        </mat-form-field>
+                        <br>
+                        <input type="file" formControlName="image" (change)="onFileSelected($event)">
+                        <br>
+                        <mat-form-field appearance="standart">
+                            <mat-label>Price</mat-label>
+                            <input matInput formControlName="price">
+                        </mat-form-field>
+                        <br>
+                        <button mat-button>Add Product</button>
                     </form>
                     <br>
-                    <mat-form-field appearance="standart">
-                        <mat-label>Price</mat-label>
-                        <input matInput>
-                    </mat-form-field>
-                    <br>
-                    <button mat-button>Add Product</button>
-                    <br>
                 </div>
+
             </div>
+
+
         </div>
+
+
+
+        <div *ngIf="modaledit" class="adminEdit">
+            <form [formGroup]="editForm">
+                <mat-form-field appearance="standart">
+                    <mat-label>Product Name</mat-label>
+                    <input matInput type="text" formControlName="pName">
+                </mat-form-field>
+                <br>
+                <mat-form-field appearance="standart">
+                    <mat-label>Price</mat-label>
+                    <input matInput type="text" formControlName="price">
+                </mat-form-field>
+                <br>
+                <button mat-button *ngIf="isadmin" (click)="openEditModal($event)">Close</button>
+                <button mat-button (click)="sendEditedProductToServer($event);getAllProducts()">Save</button>
+                <!-- {{editForm.value | json}} -->
+            </form>
+        </div>
+
+
     </div>
 
-    <!-- <h2>With <code>"express"</code> npm package</h2>
-    <form action="/api/upload" enctype="multipart/form-data" method="post">
-      <div>Text field title: <input type="text" name="title" /></div>
-      <div>File: <input type="file" name="someExpressFiles" multiple="multiple" /></div>
-      <input type="submit" value="Upload" />
-    </form> -->
 
 
 
 </mat-drawer-container>
+
+
 
 <div *ngIf="!isuser">
     You have to sgin in/up

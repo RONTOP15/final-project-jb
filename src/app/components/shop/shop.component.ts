@@ -2,7 +2,9 @@ import { Component, OnInit, ViewChild } from '@angular/core';
 import { ProductsService } from 'src/app/services/products/products.service';
 import { UsersService } from 'src/app/services/users/users.service';
 import { FormBuilder } from '@angular/forms';
-
+import { FileUploader } from 'ng2-file-upload'
+import { HttpClient } from '@angular/common/http';
+import { MatDialog } from '@angular/material';
 
 
 @Component({
@@ -30,16 +32,41 @@ export class ShopComponent implements OnInit {
 
   public catagory
   public modaladmin = false
-  public adminForm
 
-  constructor(public _ps: ProductsService, public _us: UsersService, public _fb: FormBuilder) { }
+
+  // SEND PRODUCT TO SERVER
+  public adminForm
+  public imageName
+
+  // Simple EDIT MODAL
+  public modaledit = false
+  public editForm
+  public pid
+
+  public fileToUpload: File = null;
+  public upload: File = null;
+
+  constructor(public _ps: ProductsService, public _us: UsersService, public _fb: FormBuilder, public http: HttpClient, public dialogEdit: MatDialog) { }
 
   ngOnInit() {
     this.getUser()
     this.getAllProducts()
     // STATUS
     localStorage.setItem("status", `proccess ${JSON.stringify(new Date())}`)
+
+    this.adminForm = this._fb.group({
+      p_name: [''],
+      c_id: [''],
+      image: [''],
+      price: ['']
+    })
+
+    this.editForm = this._fb.group({
+      pName: [''],
+      price: ['']
+    })
   }
+
 
 
   // GET USER
@@ -174,23 +201,77 @@ export class ShopComponent implements OnInit {
       }
     )
 
-    this.adminForm = this._fb.group({
-      productName: [''],
-      price: [''],
-      catagory_id: [''],
-      image: [''],
-    })
 
 
 
     this.modaladmin = !this.modaladmin
   }
 
+  onFileSelected(event) {
+    this.imageName = event.target.files[0].name
+    // console.log(this.imageName)
+    this.upload = <File>event.target.files[0];
+  }
+
+  sendNewProductToStoreAndSaveFileInServerStatic(p) {
+
+    this.adminAddProduct(p.p_name, p.price, this.imageName, p.c_id)
+    this.uploadFileToServer()
+    this.getAllProducts()
+    this.modaladmin = !this.modaladmin
+  }
+
+  adminAddProduct(pname, price, image, cid) {
+    this._ps.addProductByAdmin(pname, price, image, cid).subscribe(
+      res => {
+        console.log(res)
+      },
+      err => {
+        console.log(err)
+      }
+    )
+  }
+
+
+  uploadFileToServer() {
+
+    const fd = new FormData()
+    fd.append('jpg', this.upload, this.upload.name)
+    this.http.post('http://localhost:3001/api/v1/products/upload', fd, {
+      reportProgress: true,
+      observe: 'events'
+    })
+      .subscribe(
+        res => {
+          console.log('proccing service')
+          console.log(res)
+        },
+        err => {
+          console.log(err)
+        }
+      )
+  }
+
+  openEditModal(event, pid) {
+    this.modaledit = !this.modaledit;
+    this.pid = pid
+  }
+
+  sendEditedProductToServer(event: any) {
+
+    this._ps.editProductByIdFromAdmin(this.pid, this.editForm.value.pName, this.editForm.value.price).subscribe(
+      res => {
+        console.log(res)
+      },
+      err => {
+        console.log(err)
+      }
+    )
+    this.modaledit = !this.modaledit
+  }
 
 
 }
 
-// productName
-// price
-// catagory_id
-// catagory_name
+
+

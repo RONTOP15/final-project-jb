@@ -1,5 +1,4 @@
-<mat-toolbar color="primary">
-    <mat-toolbar-row>
-        <span>Ivory</span>
-    </mat-toolbar-row>
-</mat-toolbar>
+<div class="row-bar">
+    <span>Ivory</span>
+    <button [routerLink]="['/']" routerLinkActive="router-link-active" mat-button (click)="logOut()">Logout</button>
+</div>

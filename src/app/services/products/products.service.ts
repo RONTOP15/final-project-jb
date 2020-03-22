@@ -55,4 +55,30 @@ export class ProductsService {
   getCatagory(): Observable<any> {
     return this.http.get('http://localhost:3001/api/v1/catagory')
   }
+
+
+  addProductByAdmin(
+    productName,
+    price,
+    image,
+    catagory_id
+  ): Observable<any> {
+    return this.http.post('http://localhost:3001/api/v1/products/', {
+      productName,
+      price,
+      image,
+      catagory_id
+    })
+  }
+
+  editProductByIdFromAdmin(pid, pName, pPrice): Observable<any> {
+    return this.http.put('http://localhost:3001/api/v1/products', {
+      pid,
+      pName,
+      pPrice
+    })
+  }
+
+
+
 }

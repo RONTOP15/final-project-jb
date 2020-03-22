@@ -22,6 +22,7 @@ import { OrderComponent } from './components/order/order.component';
 
 import { HighlightPipe } from './highlight.pipe';
 
+import { FileUploadModule } from 'ng2-file-upload'
 
 
 @NgModule({
@@ -44,7 +45,8 @@ import { HighlightPipe } from './highlight.pipe';
     HttpClientModule,
     ReactiveFormsModule,
     MaterialModule,
-    FormsModule
+    FormsModule,
+    FileUploadModule
   ],
   providers: [],
   bootstrap: [AppComponent]
