@@ -214,10 +214,10 @@ export class ShopComponent implements OnInit {
   }
 
   sendNewProductToStoreAndSaveFileInServerStatic(p) {
-
-    this.adminAddProduct(p.p_name, p.price, this.imageName, p.c_id)
     this.uploadFileToServer()
+    this.adminAddProduct(p.p_name, p.price, this.imageName, p.c_id)
     this.getAllProducts()
+
     this.modaladmin = !this.modaladmin
   }
 
@@ -225,6 +225,7 @@ export class ShopComponent implements OnInit {
     this._ps.addProductByAdmin(pname, price, image, cid).subscribe(
       res => {
         console.log(res)
+
       },
       err => {
         console.log(err)
